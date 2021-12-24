@@ -6,6 +6,9 @@ from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
+import os
+from os.path import join, dirname
+from dotenv import load_dotenv
 
 app = FastAPI()
 
@@ -16,22 +19,25 @@ class Post(BaseModel):
     published: bool = True
 
 
+dotenv_path = join(dirname(__file__), '../.env')
+load_dotenv(dotenv_path)
+
+HOST = os.environ.get("host")
+DATABASE = os.environ.get("database")
+USER = os.environ.get("user")
+PASSWORD = os.environ.get("password")
+
+
 while True:
     try:
-        conn = psycopg2.connect(host='192.168.0.102', database='fastapi',
-                                user='postgres', password='changeme', cursor_factory=RealDictCursor)
+        conn = psycopg2.connect(host=HOST, database=DATABASE,
+                                user=USER, password=PASSWORD, cursor_factory=RealDictCursor)
         cursor = conn.cursor()
         print('DB Conn was successfull!')
         break
     except Exception as error:
         print(f"Error: {error}")
         time.sleep(2)
-
-
-my_posts = [
-    {"title": "title of post 1", "content": "content of post 1", "id": 1},
-    {"title": "favourite foods", "content": "I like Pizza", "id": 2}
-]
 
 
 @app.get("/")
