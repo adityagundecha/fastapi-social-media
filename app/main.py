@@ -109,8 +109,8 @@ def update_post(id: int, post: Post, db: Session = Depends(get_db)):
     # conn.commit()
 
     post_query = db.query(models.Post).filter(models.Post.id == id)
-    post = post_query.first()
-    if post == None:
+    updated_post = post_query.first()
+    if updated_post == None:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             detail=f"Post with id {id} not found")
     post_query.update(post.dict(), synchronize_session=False)
