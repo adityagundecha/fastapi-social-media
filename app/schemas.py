@@ -1,7 +1,22 @@
 from pydantic import BaseModel
+from datetime import datetime
 
-class Post(BaseModel):
-    """A Class to define the shape of the requests coming into the API"""
+
+class PostBase(BaseModel):
     title: str
     content: str
     published: bool = True
+
+
+class PostCreated(PostBase):
+    """A Class to define the shape of the requests coming into the API"""
+    pass
+
+
+class PostResponse(PostBase):
+    """A Class to define the shape of the response coming from the API"""
+    id: int
+    created_at: datetime
+
+    class Config:
+        orm_mode = True

@@ -8,6 +8,7 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.params import Depends
 from psycopg2.extras import RealDictCursor
 from sqlalchemy.orm import Session
+from starlette.responses import Response
 
 from . import models, schemas
 from .database import engine, get_db
@@ -48,11 +49,11 @@ def get_posts(db: Session = Depends(get_db)):
     # cursor.execute("""SELECT * FROM posts""")
     # posts = cursor.fetchall()
     posts = db.query(models.Post).all()
-    return {"data": posts}
+    return posts
 
 
-@app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_post(post: schemas.Post, db: Session = Depends(get_db)):
+@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
+def create_post(post: schemas.PostCreated, db: Session = Depends(get_db)):
     # cursor.execute("""INSERT into posts(title, content, published) VALUES (%s, %s, %s) RETURNING * """,
     #                (post.title, post.content, post.published))
     # new_post = cursor.fetchone()
@@ -62,10 +63,10 @@ def create_post(post: schemas.Post, db: Session = Depends(get_db)):
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
-    return {"data": new_post}
+    return new_post
 
 
-@app.get("/posts/{id}")
+@app.get("/posts/{id}", response_model=schemas.PostResponse)
 def get_post(id: int, db: Session = Depends(get_db)):
     # cursor.execute("""SELECT * FROM posts WHERE id = %s""", (str(id)))
     # post = cursor.fetchone()
@@ -73,7 +74,7 @@ def get_post(id: int, db: Session = Depends(get_db)):
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             detail=f"Post with id: {id} not found")
-    return {"data": post}
+    return post
 
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -92,8 +93,8 @@ def delete_post(id: int, db: Session = Depends(get_db)):
     return
 
 
-@app.put("/posts/{id}")
-def update_post(id: int, post: schemas.Post, db: Session = Depends(get_db)):
+@app.put("/posts/{id}", )
+def update_post(id: int, post: schemas.PostCreated, db: Session = Depends(get_db)):
     # cursor.execute("""UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING * """,
     #                (post.title, post.content, post.published, str(id)))
     # updated_post = cursor.fetchone()
@@ -106,4 +107,4 @@ def update_post(id: int, post: schemas.Post, db: Session = Depends(get_db)):
                             detail=f"Post with id {id} not found")
     post_query.update(post.dict(), synchronize_session=False)
     db.commit()
-    return {"data": post_query.first()}
+    return post_query.first()
