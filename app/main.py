@@ -1,29 +1,20 @@
-from sqlalchemy.sql.functions import mode
-from . import models
-from .database import engine, get_db
-from typing import Optional
-from fastapi import FastAPI, Response, status, HTTPException
-from fastapi.params import Body, Depends
-from pydantic import BaseModel
-from random import randrange
-from os.path import join, dirname
+import os
+import time
+from os.path import dirname, join
+
+import psycopg2
 from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, status
+from fastapi.params import Depends
 from psycopg2.extras import RealDictCursor
 from sqlalchemy.orm import Session
-import time
-import psycopg2
-import os
 
+from . import models, schemas
+from .database import engine, get_db
 
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
 get_db()
-
-
-class Post(BaseModel):
-    title: str
-    content: str
-    published: bool = True
 
 
 dotenv_path = join(dirname(__file__), '../.env')
@@ -61,7 +52,7 @@ def get_posts(db: Session = Depends(get_db)):
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_post(post: Post, db: Session = Depends(get_db)):
+def create_post(post: schemas.Post, db: Session = Depends(get_db)):
     # cursor.execute("""INSERT into posts(title, content, published) VALUES (%s, %s, %s) RETURNING * """,
     #                (post.title, post.content, post.published))
     # new_post = cursor.fetchone()
@@ -102,7 +93,7 @@ def delete_post(id: int, db: Session = Depends(get_db)):
 
 
 @app.put("/posts/{id}")
-def update_post(id: int, post: Post, db: Session = Depends(get_db)):
+def update_post(id: int, post: schemas.Post, db: Session = Depends(get_db)):
     # cursor.execute("""UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING * """,
     #                (post.title, post.content, post.published, str(id)))
     # updated_post = cursor.fetchone()
