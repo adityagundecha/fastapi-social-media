@@ -77,7 +77,7 @@ def get_post(id: int, db: Session = Depends(get_db)):
     return post
 
 
-@app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
 def delete_post(id: int, db: Session = Depends(get_db)):
     # cursor.execute(
     #     """DELETE FROM posts WHERE id = %s RETURNING * """, (str(id),))
