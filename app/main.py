@@ -2,6 +2,7 @@ import os
 import time
 from os.path import dirname, join
 
+from typing import List
 import psycopg2
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, status
@@ -44,7 +45,7 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.get("/posts")
+@app.get("/posts", response_model=List[schemas.PostResponse])
 def get_posts(db: Session = Depends(get_db)):
     # cursor.execute("""SELECT * FROM posts""")
     # posts = cursor.fetchall()
