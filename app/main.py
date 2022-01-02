@@ -1,7 +1,6 @@
 import os
 import time
 from os.path import dirname, join
-from passlib.context import CryptContext
 from typing import List
 import psycopg2
 from dotenv import load_dotenv
@@ -11,12 +10,12 @@ from psycopg2.extras import RealDictCursor
 from sqlalchemy.orm import Session
 from starlette.responses import Response
 
-from . import models, schemas
+from . import models, schemas, utils
 from .database import engine, get_db
 
 app = FastAPI()
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 models.Base.metadata.create_all(bind=engine)
 get_db()
 
@@ -117,7 +116,7 @@ def update_post(id: int, post: schemas.PostCreated, db: Session = Depends(get_db
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
     # hash the password - user.password
-    hashed_password = pwd_context.hash(user.password)
+    hashed_password = utils.hash(user.password)
     user.password = hashed_password
     new_user = models.User(**user.dict())
     db.add(new_user)
