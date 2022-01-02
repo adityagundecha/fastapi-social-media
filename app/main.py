@@ -9,6 +9,7 @@ from fastapi.params import Depends
 from psycopg2.extras import RealDictCursor
 from sqlalchemy.orm import Session
 from starlette.responses import Response
+from starlette.status import HTTP_404_NOT_FOUND
 
 from . import models, schemas, utils
 from .database import engine, get_db
@@ -123,3 +124,13 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     return new_user
+
+
+@app.get('/users/{id}', response_model=schemas.UserResponse)
+def get_user(id: int, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.id == id).first()
+    if not user:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND,
+                            detail=f'User with {id} does not exist')
+    print(user)
+    return user
