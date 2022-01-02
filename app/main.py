@@ -1,7 +1,7 @@
 import os
 import time
 from os.path import dirname, join
-
+from passlib.context import CryptContext
 from typing import List
 import psycopg2
 from dotenv import load_dotenv
@@ -15,6 +15,8 @@ from . import models, schemas
 from .database import engine, get_db
 
 app = FastAPI()
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 models.Base.metadata.create_all(bind=engine)
 get_db()
 
@@ -113,6 +115,10 @@ def update_post(id: int, post: schemas.PostCreated, db: Session = Depends(get_db
 
 @app.post("/users", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+
+    # hash the password - user.password
+    hashed_password = pwd_context.hash(user.password)
+    user.password = hashed_password
     new_user = models.User(**user.dict())
     db.add(new_user)
     db.commit()
