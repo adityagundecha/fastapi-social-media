@@ -26,3 +26,12 @@ class UserCreate(BaseModel):
     """A Class to create a User"""
     email: EmailStr
     password: str
+
+
+class UserResponse(BaseModel):
+    id: int
+    email: EmailStr
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
