@@ -8,10 +8,12 @@ from starlette.responses import Response
 from .. import models, schemas
 from ..database import get_db
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/posts"
+)
 
 
-@router.get("/posts", response_model=List[schemas.PostResponse])
+@router.get("/", response_model=List[schemas.PostResponse])
 def get_posts(db: Session = Depends(get_db)):
     # cursor.execute("""SELECT * FROM posts""")
     # posts = cursor.fetchall()
@@ -19,7 +21,7 @@ def get_posts(db: Session = Depends(get_db)):
     return posts
 
 
-@router.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
 def create_post(post: schemas.PostCreated, db: Session = Depends(get_db)):
     # cursor.execute("""INSERT into posts(title, content, published) VALUES (%s, %s, %s) RETURNING * """,
     #                (post.title, post.content, post.published))
@@ -33,7 +35,7 @@ def create_post(post: schemas.PostCreated, db: Session = Depends(get_db)):
     return new_post
 
 
-@router.get("/posts/{id}", response_model=schemas.PostResponse)
+@router.get("/{id}", response_model=schemas.PostResponse)
 def get_post(id: int, db: Session = Depends(get_db)):
     # cursor.execute("""SELECT * FROM posts WHERE id = %s""", (str(id)))
     # post = cursor.fetchone()
@@ -44,7 +46,7 @@ def get_post(id: int, db: Session = Depends(get_db)):
     return post
 
 
-@router.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
 def delete_post(id: int, db: Session = Depends(get_db)):
     # cursor.execute(
     #     """DELETE FROM posts WHERE id = %s RETURNING * """, (str(id),))
@@ -60,7 +62,7 @@ def delete_post(id: int, db: Session = Depends(get_db)):
     return
 
 
-@router.put("/posts/{id}", )
+@router.put("/{id}", )
 def update_post(id: int, post: schemas.PostCreated, db: Session = Depends(get_db)):
     # cursor.execute("""UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING * """,
     #                (post.title, post.content, post.published, str(id)))
