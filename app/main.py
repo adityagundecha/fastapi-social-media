@@ -10,12 +10,11 @@ from .database import engine, get_db
 from .routers import post, user
 
 app = FastAPI()
-
-
 models.Base.metadata.create_all(bind=engine)
 get_db()
 
 
+# Get the database parameters from env
 dotenv_path = join(dirname(__file__), '../.env')
 load_dotenv(dotenv_path)
 
@@ -25,6 +24,7 @@ USER = os.environ.get("user")
 PASSWORD = os.environ.get("password")
 
 
+# Connect to the db
 while True:
     try:
         conn = psycopg2.connect(host=HOST, database=DATABASE,
@@ -37,10 +37,12 @@ while True:
         time.sleep(2)
 
 
+# Load routers
 app.include_router(post.router)
 app.include_router(user.router)
 
 
+# Default Root route
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
