@@ -1,10 +1,10 @@
-from fastapi import HTTPException, status, APIRouter
+from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_404_NOT_FOUND
+
 from .. import models, schemas, utils
 from ..database import get_db
-
 
 router = APIRouter(
     prefix="/users",

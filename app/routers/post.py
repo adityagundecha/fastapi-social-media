@@ -1,9 +1,9 @@
 from typing import List
-from fastapi import HTTPException, status, APIRouter
+
+from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 from starlette.responses import Response
-
 
 from .. import models, schemas
 from ..database import get_db

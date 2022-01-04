@@ -1,13 +1,15 @@
 import os
 import time
 from os.path import dirname, join
+
 import psycopg2
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from psycopg2.extras import RealDictCursor
+
 from . import models
 from .database import engine, get_db
-from .routers import post, user
+from .routers import post, user, auth
 
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
@@ -40,6 +42,7 @@ while True:
 # Load routers
 app.include_router(post.router)
 app.include_router(user.router)
+app.include_router(auth.router)
 
 
 # Default Root route
