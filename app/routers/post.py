@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 from starlette.responses import Response
+from starlette.status import HTTP_403_FORBIDDEN
 
 from app import oauth2
 
@@ -60,6 +61,9 @@ def delete_post(id: int, db: Session = Depends(get_db), current_user: int = Depe
     if post_query.first() == None:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             detail=f"Post with id: {id} not found")
+    if post_query.owner_id != oauth2.get_current_user.id:
+        raise HTTPException(status_code=HTTP_403_FORBIDDEN,
+                            detail="Not authorized to perform requested action")
     post_query.delete(synchronize_session=False)
     db.commit()
     return
@@ -77,6 +81,9 @@ def update_post(id: int, post: schemas.PostCreated, db: Session = Depends(get_db
     if updated_post == None:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             detail=f"Post with id {id} not found")
+    if post_query.owner_id != oauth2.get_current_user.id:
+        raise HTTPException(status_code=HTTP_403_FORBIDDEN,
+                            detail="Not authorized to perform requested action")
     post_query.update(post.dict(), synchronize_session=False)
     db.commit()
     return post_query.first()
