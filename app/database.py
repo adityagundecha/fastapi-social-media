@@ -8,6 +8,8 @@ import psycopg2
 import time
 from os.path import dirname, join
 from psycopg2.extras import RealDictCursor
+from .database import engine, get_db
+from . import models
 
 dotenv_path = join(dirname(__file__), '../.env')
 load_dotenv(dotenv_path)
@@ -29,6 +31,8 @@ while True:
         print(f"Error: {error}")
         time.sleep(2)
 
+models.Base.metadata.create_all(bind=engine)
+get_db()
 
 SQLALCHEMY_DATABASE_URL = f'postgresql://{USER}:{PASSWORD}@{HOST}/{DATABASE}'
 
