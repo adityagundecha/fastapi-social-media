@@ -1,12 +1,10 @@
+from app import oauth2
 from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
-from starlette.responses import Response
-from starlette.status import HTTP_403_FORBIDDEN
 
-from app import oauth2
 
-from .. import models, schemas, oauth2, database
+from .. import models, oauth2, schemas
 from ..database import get_db
 
 router = APIRouter(
@@ -24,7 +22,7 @@ def vote(vote: schemas.Vote, db: Session = Depends(get_db), current_user: int = 
         if(found_vote):
             raise HTTPException(status_code=status.HTTP_409_CONFLICT,
                                 detail=f"User {current_user.id} cannot like the post {vote.post_id} again")
-        new_vote = models.Vote(post_id=vote.post_id, user_id=vote.user_id)
+        new_vote = models.Vote(post_id=vote.post_id, user_id=current_user.id)
         db.add(new_vote)
         db.commit()
         return {"message": "Vote added successfully"}

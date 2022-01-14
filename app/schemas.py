@@ -54,6 +54,7 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     id: Optional[str] = None
 
+
 class Vote(BaseModel):
-    podt_id: int
+    post_id: int
     dir: conint(le=1)
