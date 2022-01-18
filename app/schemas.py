@@ -3,6 +3,8 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from pydantic.types import conint
 
+from app.models import Post
+
 
 class UserResponse(BaseModel):
     id: int
@@ -35,6 +37,14 @@ class PostResponse(PostBase):
     created_at: datetime
     owner_id: int
     owner: UserResponse
+
+    class Config:
+        orm_mode = True
+
+
+class PostOut(BaseModel):
+    Post: PostResponse
+    votes: int
 
     class Config:
         orm_mode = True

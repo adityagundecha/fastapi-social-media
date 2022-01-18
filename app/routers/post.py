@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from starlette.responses import Response
 from starlette.status import HTTP_403_FORBIDDEN
@@ -17,12 +18,15 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=List[schemas.PostResponse])
+@router.get("/", response_model=List[schemas.PostOut])
 def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user), limit: int = 10, skip: int = 0, search: Optional[str] = ""):
     # cursor.execute("""SELECT * FROM posts""")
     # posts = cursor.fetchall()
     # print(current_user)
-    posts = db.query(models.Post).filter(
+    # posts = db.query(models.Post).filter(
+    #     models.Post.title.contains(search)).limit(limit).offset(skip).all()
+    posts = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(
+        models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(
         models.Post.title.contains(search)).limit(limit).offset(skip).all()
     return posts
 
