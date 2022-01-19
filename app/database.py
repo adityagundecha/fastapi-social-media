@@ -1,3 +1,4 @@
+from email import utils
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -5,6 +6,7 @@ from os.path import join, dirname
 from dotenv import load_dotenv
 import os
 from os.path import dirname, join
+from app.utils import get_db_url
 
 dotenv_path = join(dirname(__file__), '../.env')
 load_dotenv(dotenv_path)
@@ -26,7 +28,7 @@ PASSWORD = os.environ.get("password")
 #         print(f"Error: {error}")
 #         time.sleep(2)
 
-SQLALCHEMY_DATABASE_URL = f'postgresql://{USER}:{PASSWORD}@{HOST}/{DATABASE}'
+SQLALCHEMY_DATABASE_URL = get_db_url()
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
