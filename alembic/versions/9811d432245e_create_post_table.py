@@ -22,9 +22,7 @@ def upgrade():
                               nullable=False, primary_key=True),
                     sa.Column('title', sa.String(), nullable=False)
                     )
-    pass
 
 
 def downgrade():
     op.drop_table('posts')
-    pass
