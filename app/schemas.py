@@ -3,7 +3,6 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from pydantic.types import conint
 
-from app.models import Post
 
 
 class UserResponse(BaseModel):

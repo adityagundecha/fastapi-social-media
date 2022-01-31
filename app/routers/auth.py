@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
-from sqlalchemy import schema
 from sqlalchemy.orm import Session
 from .. import database, schemas, models, utils, oauth2
 from starlette.status import HTTP_403_FORBIDDEN

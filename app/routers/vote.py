@@ -1,4 +1,3 @@
-from pyexpat import model
 from app import oauth2
 from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
