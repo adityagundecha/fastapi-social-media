@@ -19,9 +19,9 @@ def get_db_url():
     dotenv_path = join(dirname(__file__), '../.env')
     load_dotenv(dotenv_path)
 
-    HOST = os.environ.get("host")
-    DATABASE = os.environ.get("database")
-    USER = os.environ.get("user")
-    PASSWORD = os.environ.get("password")
+    HOST = os.environ.get("DATABASE_HOSTNAME")
+    DATABASE = os.environ.get("DATABASE_NAME")
+    USER = os.environ.get("DATABASE_USERNAME")
+    PASSWORD = os.environ.get("DATABASE_PASSWORD")
     SQLALCHEMY_DATABASE_URL = f'postgresql://{USER}:{PASSWORD}@{HOST}/{DATABASE}'
     return SQLALCHEMY_DATABASE_URL
